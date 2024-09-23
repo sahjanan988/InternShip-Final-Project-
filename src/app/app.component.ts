@@ -26,3 +26,9 @@ export class AppComponent  implements OnInit{
     // ...
   }
 }
+export class MyComponent {
+  myObject = {
+    name: 'John Doe',
+    age: 30
+  };
+}

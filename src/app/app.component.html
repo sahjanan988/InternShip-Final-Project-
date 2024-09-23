@@ -178,12 +178,14 @@
 </style>
 
 <main class="main">
+  <div class="container">
+    <div>
+      <p>{{ myObject | json }}</p>
+    </div>
+  </div>
   <div class="content">
     <div class="left-side">
-      <div *ngFor="let post of posts | async">
-        {{ post | json}}
-      </div>
-      <svg
+            <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 982 239"
         fill="none"
