@@ -1,31 +1,22 @@
 const express = require('express');
-const Joi = require('joi');
 const app = express();
 const cors = require('cors');
-// Define a schema for user data
-const userSchema = Joi.object({
-    name: Joi.string().required(),
-    email: Joi.string().email().required(),
-    password: Joi.string().min(8).required(),})
-    // Validate user creation requests
-app.post('/users', celebrate({
-    body: userSchema,
-  }), (req, res) => {
-    // If validation passes, create the user
-    // ...
-  });
-
-app.get('/', (req, res) => {
-  res.send('Hello, world!');
-});
-
-app.listen(3000, () => {
-  console.log('Server listening on port 3000');   
-
-});
-
-// Configure CORS
+const dotenv = require('dotenv');
+// Load environment variables from .env file
+dotenv.config(); 
+const port = process.env.PORT || 3306;
+// Enable CORS
 app.use(cors());
+CD 
+// Define routes
+app.get('/', (req, res) => {
+    res.send('Hello from Express.js!');
+});
 
-// ... other server setup
+// Start the server
+app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+});
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize(process.env.DATABASE_URL);
 
