@@ -31,7 +31,7 @@
                 </div>
             </div>
             <!-- media-body -->
-            <div class="sign-wrapper mg-lg-l-50 mg-xl-l-60">
+            <div class="sign-wrapper mg-lg-l-50 mg-xl-l-60 ">
                 <div class="wd-100p">
 
                     <h3 class="tx-color-01 mg-b-5">Sign In</h3>

@@ -224,8 +224,5 @@
                successClass: 'is-valid',
            });
        } );
-
-
-
    </script>
 @endsection

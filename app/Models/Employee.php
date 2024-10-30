@@ -39,16 +39,11 @@ class Employee extends Authenticatable
     ];
 
     public function customers(){
-        return $this->hasMany(Customer::class);
+        return $this->hasMany(Customer::class,'emp_id');
     }
 
     public function invoices(){
         return $this->hasMany(CustomerInvoice::class);
-    }
-
-    public function transactions(){
-
-        return $this->hasMany(LedgerBook::class);
     }
 
 }

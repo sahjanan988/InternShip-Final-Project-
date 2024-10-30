@@ -33,27 +33,27 @@
                                 </div>
                             @endif
 
-                                @if ($errors->any())
-                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                        <h5 class="tx-danger"> Please check the following fields:</h5>
-                                        <ul>
-                                            @foreach ($errors->all() as $error)
-                                                <li class="h6 tx-danger">{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
+                            @if ($errors->any())
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <h5 class="tx-danger"> Please check the following fields:</h5>
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li class="h6 tx-danger">{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
 
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                @endif
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            @endif
                             <form id="edit-user" action="{{route('employees.edit',$employee->id)}}" method="post" data-parsley-validate>
 
                                 @csrf
                                 @method('PUT')
 
                                 <fieldset class="form-fieldset mb-2">
-                                <legend>Personal Information</legend>
+                                    <legend>Personal Information</legend>
                                     <div class="row mb-2">
                                         <div class="col">
                                             <div class="form-group">
@@ -117,67 +117,67 @@
 
 
                                 <fieldset class="form-fieldset mb-2">
-                                <legend>Credentials</legend>
-                                <div class="row mb-2">
-                                    <div class="col">
-                                        <div class="form-group">
-                                            <label>Username: <span class="tx-danger">*</span></label>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-user-circle"></i></span>
+                                    <legend>Credentials</legend>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label>Username: <span class="tx-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-user-circle"></i></span>
+                                                    </div>
+                                                    <input type="text" name="username" class="form-control tx-gray-400" placeholder="Enter Username" autocomplete="username" value="{{(old('username') == '') ? $employee->username : old('username') }}" readOnly>
                                                 </div>
-                                                <input type="text" name="username" class="form-control tx-gray-400" placeholder="Enter Username" autocomplete="username" value="{{(old('username') == '') ? $employee->username : old('username') }}" readOnly>
-                                            </div>
-                                        </div><!-- form-group -->
+                                            </div><!-- form-group -->
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row mb-2">
-                                    <div class="col">
-                                        <div class="form-group">
-                                            <label>Change Password:</label>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label>Change Password:</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                                    </div>
+                                                    <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Enter password" autocomplete="new-password" >
                                                 </div>
-                                            <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Enter password" autocomplete="new-password" >
-                                            </div>
-                                        </div><!-- form-group -->
+                                            </div><!-- form-group -->
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="row mb-2">
-                                    <div class="col">
-                                        <div class="form-group">
-                                            <label>Confirm Password: </label>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label>Confirm Password: </label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                                    </div>
+                                                    <input type="password"  data-parsley-equalto="#inputPassword" id="inputConfirmPassword" name="password_confirmation" class="form-control" placeholder="Enter password" autocomplete="new-password" >
                                                 </div>
-                                                <input type="password"  data-parsley-equalto="#inputPassword" id="inputConfirmPassword" name="password_confirmation" class="form-control" placeholder="Enter password" autocomplete="new-password" >
-                                            </div>
-                                        </div><!-- form-group -->
+                                            </div><!-- form-group -->
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="row mb-1">
-                                    <div class="col">
-                                        <div class="form-group">
-                                            <label>Role: <span class="tx-danger">*</span></label>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-user-shield"></i></span>
+                                    <div class="row mb-1">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label>Role: <span class="tx-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-user-shield"></i></span>
+                                                    </div>
+                                                    <select class="custom-select" name="role" required>
+                                                        <option value="" {{(old('role') == '' || $employee->role == '')  ? 'selected' : ''}}>Choose one</option>
+                                                        <option value="admin" {{(old('role') == '') ? (($employee->role == 'admin') ? 'selected' : ''):((old('role') == 'admin')  ? 'selected' : '')}}>Administrator</option>
+                                                        <option value="collector" {{(old('role') == '') ? (($employee->role == 'collector') ? 'selected' : ''):((old('role') == 'collector')  ? 'selected' : '')}}>Collector</option>
+
+
+                                                    </select>
                                                 </div>
-                                            <select class="custom-select" name="role" required>
-                                                   <option value="" {{(old('role') == '' || $employee->role == '')  ? 'selected' : ''}}>Choose one</option>
-												   <option value="admin" {{(old('role') == '') ? (($employee->role == 'admin') ? 'selected' : ''):((old('role') == 'admin')  ? 'selected' : '')}}>Administrator</option>
-													 <option value="collector" {{(old('role') == '') ? (($employee->role == 'collector') ? 'selected' : ''):((old('role') == 'collector')  ? 'selected' : '')}}>Collector</option>
-
-
-                                            </select>
-                                            </div>
-                                        </div><!-- form-group -->
+                                            </div><!-- form-group -->
+                                        </div>
                                     </div>
-                                </div>
                                 </fieldset>
                                 <div class="row mb-3">
                                     <div class="col">
@@ -201,33 +201,33 @@
     <script src="{{asset('lib/cleave.js/cleave.min.js')}}"></script>
     <script src="{{asset('lib/cleave.js/addons/cleave-phone.lb.js')}}"></script>
 
-   <script type="text/javascript">
-       var phone = new Cleave('#inputPhoneNumber', {
-           phone: true,
-           phoneRegionCode: 'LB'
-       });
+    <script type="text/javascript">
+        var phone = new Cleave('#inputPhoneNumber', {
+            phone: true,
+            phoneRegionCode: 'LB'
+        });
 
 
-       $( function() {
-           $('#inputEnroll').datepicker({
-               showOtherMonths: true,
-               selectOtherMonths: true,
-               changeMonth: true,
-               changeYear: true
-           });
-       } );
+        $( function() {
+            $('#inputEnroll').datepicker({
+                showOtherMonths: true,
+                selectOtherMonths: true,
+                changeMonth: true,
+                changeYear: true
+            });
+        } );
 
-       $( function() {
-           $('#edit-user').parsley({
-               errorsContainer: function(el) {
-                   return el.$element.closest('.form-group');
-               },
-               errorClass: 'is-invalid',
-               successClass: 'is-valid',
-           });
-       } );
+        $( function() {
+            $('#edit-user').parsley({
+                errorsContainer: function(el) {
+                    return el.$element.closest('.form-group');
+                },
+                errorClass: 'is-invalid',
+                successClass: 'is-valid',
+            });
+        } );
 
 
 
-   </script>
+    </script>
 @endsection

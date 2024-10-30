@@ -104,7 +104,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
                                                     </div>
-                                                    <input id="amount" type="number" name="amount" class="form-control" placeholder="Enter plan cost" value="" required>
+                                                    <input id="amount" type="number" name="amount" class="form-control" placeholder="Enter transaction amount" value="" required>
                                                     <div class="input-group-append">
                                                         <span class="input-group-text"><strong>LBP</strong></span>
                                                     </div>

@@ -29,6 +29,7 @@ class Customer extends Model
         'notes',
         'password',
         'emp_id',
+        'radius_exp'
     ];
     public function area(){
 

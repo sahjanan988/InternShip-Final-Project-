@@ -91,10 +91,10 @@
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text"><i class="fas fa-city"></i></span>
                                                         </div>
-                                                        <select class="custom-select select2-dropdown select2-tags" name="area" required>
+                                                        <select class="custom-select" name="area" required>
                                                             <option value="" {{(old('area') == '')  ? 'selected' : ''}}>Choose one</option>
                                                             @foreach($areas as $area)
-                                                                <option value="{{$area->id}}" {{(old('area') == $area->id)  ? 'selected' : ''}}>{{$area->name}}</option>
+                                                                <option value="{{$area->id}}">{{$area->name}}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -109,11 +109,8 @@
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text"><i class="fas fa-road"></i></span>
                                                         </div>
-                                                        <select class="custom-select select2-dropdown select2-tags" name="street" disabled required>
+                                                        <select class="custom-select" name="street" disabled required>
                                                             <option value="" {{(old('street') == '')  ? 'selected' : ''}}>Choose area first</option>
-                                                            @foreach($streets as $street)
-                                                                <option value="{{$street->id}}" {{(old('street') == $street->id)  ? 'selected' : ''}}>{{$street->name}}</option>
-                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div><!-- form-group -->
@@ -127,11 +124,8 @@
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text"><i class="fas fa-building"></i></span>
                                                         </div>
-                                                        <select class="custom-select select2-dropdown select2-tags" name="building" disabled required>
+                                                        <select class="custom-select" name="building" disabled required>
                                                             <option value="" {{(old('building') == '')  ? 'selected' : ''}}>Choose street first</option>
-                                                            @foreach($buildings as $building)
-                                                                <option value="{{$building->id}}" {{(old('building') == $building->id)  ? 'selected' : ''}}>{{$building->name}}</option>
-                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div><!-- form-group -->
@@ -140,17 +134,14 @@
 
                                         <div class="row mb-1">
                                             <div class="col">
-                                                <div class="form-group ">
+                                                <div class="form-group">
                                                     <label>Box: <span class="tx-danger">*</span></label>
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text"><i class="fas fa-box"></i></span>
                                                         </div>
-                                                        <select class="custom-select select2-dropdown select2-tags" name="box" disabled required>
+                                                        <select class="custom-select" name="box" disabled required>
                                                             <option value="" {{(old('box') == '')  ? 'selected' : ''}}>Choose building first</option>
-                                                            @foreach($boxes as $box)
-                                                                <option value="{{$box->id}}" {{(old('box') == $box->id)  ? 'selected' : ''}}>{{$box->name}}</option>
-                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div><!-- form-group -->
@@ -201,7 +192,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fas fa-layer-group"></i></span>
                                                     </div>
-                                                    <select class="custom-select select2-dropdown select2-no-search" name="plan" required>
+                                                    <select class="custom-select" name="plan" required>
                                                         <option value="" {{(old('plan') == '')  ? 'selected' : ''}}>Choose one</option>
                                                         @foreach($plans as $plan)
                                                         <option value="{{$plan->id}}" {{(old('plan') == $plan->id)  ? 'selected' : ''}}>{{$plan->name}}</option>
@@ -229,7 +220,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fas fa-tv"></i></span>
                                                     </div>
-                                                    <select class="custom-select select2-dropdown select2-no-search" name="iptv" id="iptv"  {{ old('enableIPTV') ? '' : 'disabled' }}>
+                                                    <select class="custom-select" name="iptv" id="iptv"  {{ old('enableIPTV') ? '' : 'disabled' }}>
                                                         <option value="" {{(old('iptv') == '')  ? 'selected' : ''}}>Choose one</option>
                                                         @foreach($iptv as $tv)
                                                             <option value="{{$tv->id}}" {{(old('iptv') == $tv->id)  ? 'selected' : ''}}>{{$tv->name}}</option>
@@ -243,12 +234,9 @@
                                     <div class="row mb-1">
                                         <div class="col">
                                             <div class="form-group">
-                                                <label>Services: </label>
+                                                <label>Services:</label>
                                                 <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-cogs"></i></span>
-                                                    </div>
-                                                    <select id="services" class="custom-select" name="service[]" id="service" multiple="multiple" >
+                                                    <select id="services" class="custom-select" name="service[]" id="service" multiple="multiple" style="width: 100%">
                                                         @foreach($services as $service)
                                                             <option value="{{$service->id}}" {{old('service')?(in_array($service->id, old('service')) ? 'selected' : '') : ''}}>{{$service->name}}</option>
                                                         @endforeach
@@ -271,7 +259,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
                                                     </div>
-                                                    <select class="custom-select" id="employee" name="employee" required>
+                                                    <select class="custom-select" name="employee" required>
                                                         <option value="" {{(old('employee') == '')  ? 'selected' : ''}}>Choose one</option>
                                                         @foreach($employees as $employee)
                                                             <option value="{{$employee->id}}" {{(old('employee') == $employee->id)  ? 'selected' : ''}}>{{$employee->name}}</option>
@@ -318,12 +306,12 @@
                                     <div class="row mb-2">
                                         <div class="col">
                                             <div class="form-group">
-                                                <label>Custom Price: <span class="tx-gray-300">(Optional)</span></label>
+                                                <label>Custom Price: </label>
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
                                                     </div>
-                                                    <input id="inputCost" type="number" name="custom_price" class="form-control" placeholder="Enter custom price" value="{{old('custom_price')}}" >
+                                                    <input id="inputCost" type="number" name="custom_price" class="form-control" placeholder="Enter custom price" value="{{(old('custom_price'))?old('custom_price'):0}}" >
                                                     <div class="input-group-append">
                                                         <span class="input-group-text"><strong>LBP</strong></span>
                                                     </div>
@@ -332,6 +320,22 @@
                                         </div>
                                     </div>
 
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label>Previous Balance:</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
+                                                    </div>
+                                                    <input id="inputCost" type="number" name="old_balance" class="form-control" placeholder="Enter old balance" value="{{(old('custom_price'))?old('custom_price'):0}}" >
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text"><strong>LBP</strong></span>
+                                                    </div>
+                                                </div>
+                                            </div><!-- form-group -->
+                                        </div>
+                                    </div>
                                     <div class="row mb-2">
                                         <div class="col">
                                             <div class="form-group">
@@ -367,20 +371,16 @@
             </div><!-- row -->
         </div><!-- container -->
     </div>
-
-
 @endsection
 
 
 @section('script')
-
     <script src="{{asset('lib/parsleyjs/parsley.min.js')}}"></script>
     <script src="{{asset('lib/cleave.js/cleave.min.js')}}"></script>
     <script src="{{asset('lib/cleave.js/addons/cleave-phone.lb.js')}}"></script>
     <script src="{{asset('lib/select2/js/select2.min.js')}}"></script>
 
    <script type="text/javascript">
-
        let phone = new Cleave('#inputPhoneNumber', {
            phone: true,
            phoneRegionCode: 'LB'
@@ -420,6 +420,26 @@
            }
        });
 
+       $('select[name="area"]').select2({
+           tags:true,
+           theme: "bootstrap4"
+       });
+       $('select[name="service"]').select2({
+           theme: "bootstrap4"
+       });
+       $('select[name="street"]').select2({
+           tags:true,
+           theme: "bootstrap4"
+       });
+       $('select[name="building"]').select2({
+           tags:true,
+           theme: "bootstrap4"
+       });
+       $('select[name="box"]').select2({
+           tags:true,
+           theme: "bootstrap4"
+       });
+
        $(document).ready(function() {
            $('select[name="area"]').on('change', function() {
                let areaID = $(this).val();
@@ -431,6 +451,8 @@
                        dataType: "json",
                        success: function(data) {
                            $('select[name="street"]').prop('disabled',false).empty().append('<option value="" selected>Choose Street</option>');
+                           $('select[name="building"]').prop('disabled',true).empty().append('<option value="" selected>Choose Building</option>');
+                           $('select[name="box"]').prop('disabled',true).empty().append('<option value="" selected>Choose Box</option>');
                            $.each(data, function(key, value) {
 
                                $('select[name="street"]').append('<option value="'+ value.id +'">'+ value.name +'</option>');
@@ -444,7 +466,6 @@
                }
            });
        });
-
        $(document).ready(function() {
            $('select[name="street"]').on('change', function() {
                let streetID = $('select[name="street"]').val();
@@ -456,6 +477,7 @@
                        dataType: "json",
                        success: function(data) {
                            $('select[name="building"]').prop('disabled',false).empty().append('<option value="" selected>Choose Building</option>');
+                           $('select[name="box"]').prop('disabled',true).empty().append('<option value="" selected>Choose Box</option>');
                            $.each(data, function(key, value) {
 
                                $('select[name="building"]').append('<option value="'+ value.id +'">'+ value.name +'</option>');
@@ -468,7 +490,6 @@
                }
            });
        });
-
        $(document).ready(function() {
            $('select[name="building"]').on('change', function() {
                let buildingID = $(this).val();
@@ -490,24 +511,5 @@
                }
            });
        });
-
-       $(".select2-tags").select2({
-           theme: "bootstrap",
-           tags: true
-       });
-
-       $(".select2-dropdown").select2({
-           theme: "bootstrap",
-       });
-       $(".select2-no-search").select2({
-           theme: "bootstrap",
-           minimumResultsForSearch: Infinity
-       });
-
-       $("#services").select2({
-           theme: "bootstrap",
-           placeholder: "Choose all services that apply.."
-       });
-
    </script>
 @endsection

@@ -21,17 +21,17 @@
     <link href="{{ asset('lib/datatables.net-dt/css/jquery.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ asset('lib/datatables.net-responsive-dt/css/responsive.dataTables.min.css') }}" rel="stylesheet">
     <link href="{{ asset('lib/select2/css/select2.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('lib/select2/css/select2-bootstrap.min.css') }}" rel="stylesheet" >
-
-
-
+    <link href="{{ asset('lib/select2/css/select2-bootstrap4.min.css') }}" rel="stylesheet">
 
     <!-- DashForge CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/dashforge.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/dashforge.dashboard.css') }}">
     <link rel="stylesheet" href="{{asset('assets/css/dashforge.profile.css')}}">
     <link id="dfMode" rel="stylesheet" href="{{ asset('assets/css/skin.cool.css') }}">
-    <link id="dfSkin" rel="stylesheet" href="{{ asset('assets/css/skin.deepblue.css') }}">
+    <link id="dfSkin" rel="stylesheet" href="{{ asset('assets/css/skin.gradient1.css') }}">
+<style>
+    @yield('css')
+</style>
 </head>
 <body>
 

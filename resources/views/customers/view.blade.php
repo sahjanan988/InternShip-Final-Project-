@@ -12,6 +12,29 @@
                         </button>
                     </div>
                 @endif
+
+                @if(session('failed'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong> {{session('failed')}}</strong>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
+                    @if ($errors->any())
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <h5 class="tx-danger"> Please check the following fields:</h5>
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li class="h6 tx-danger">{{ $error }}</li>
+                                @endforeach
+                            </ul>
+
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
                 <div class="container-fluid" >
                     <div class="row">
                         <div class="col-md-5 col-sm-12 mb-3">
@@ -97,10 +120,13 @@
                                     <p class="text-muted">
 
 
-
-                                        @foreach($customer->services()->get() as $service)
-                                        <span class="badge badge-info p-2" style="font-size: 0.7rem">{{$service->name}}</span>
-                                        @endforeach
+                                        @if($customer->services()->count() != 0)
+                                            @foreach($customer->services()->get() as $service)
+                                                <span class="badge badge-info p-2" style="font-size: 0.7rem">{{$service->name}}</span>
+                                            @endforeach
+                                        @else
+                                                <p class="text-muted"> No registered services</p>
+                                        @endif
 
                                         @if($customer->iptv()->first() != null)
                                                 <span class="badge badge-info p-2" style="font-size: 0.7rem">{{$customer->iptv()->first()->name}}</span>
@@ -122,7 +148,7 @@
                                         <li class="nav-item"><a class="nav-link active" href="#invoices" data-toggle="tab">Invoices</a></li>
                                         <li class="nav-item"><a class="nav-link" href="#due-payment" data-toggle="tab">Due Payments</a></li>
                                         <li class="nav-item"><a class="nav-link" href="#recharge" data-toggle="tab">Recharge</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="#edit" data-toggle="tab">Update Customer Details</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="#edit" data-toggle="tab">Modify Client Information</a></li>
                                     </ul>
                                 </div>
                                 <div class="card-body">
@@ -187,7 +213,51 @@
                                                             <td>{{$invoice->employee()->first()->name}}</td>
                                                             <td>{{$invoice->issued_at}}</td>
                                                             <td class="text-center">
-                                                                <a href="" class="btn btn-xs btn-primary pr-3"><i class="fas fa-dollar-sign tx-white"></i></a>
+                                                                <a href="" class="btn btn-xs btn-primary pr-3" data-toggle="modal" data-target="#modal-pay-{{$invoice->id}}" ><i class="fas fa-dollar-sign tx-white"></i></a>
+                                                                <div class="modal fade" id="modal-pay-{{ $invoice->id }}" tabIndex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+
+                                                                    <div class="modal-dialog" role="document">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h5 class="modal-title" id="deleteModalLabel">Confirm Payment</h5>
+                                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                    <span class="text-white" aria-hidden="true">&times;</span>
+                                                                                </button>
+                                                                            </div>
+                                                                            <div class="modal-body tx-left">
+                                                                                <form method="get" id="pay-form-{{$invoice->id}}" action="{{route('customers.pay',$invoice->id)}}">
+                                                                                        @csrf()
+                                                                                        @method('PUT')
+                                                                                    <div class="row mb-2">
+                                                                                        <div class="col">
+                                                                                            <div class="form-group">
+                                                                                                <label>Custom Amount:<span class="tx-gray-400"> ( leave 0 to pay the total amount )</span></label>
+                                                                                                <div class="input-group">
+                                                                                                    <div class="input-group-prepend">
+                                                                                                        <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
+                                                                                                    </div>
+                                                                                                    <input id="amount" type="number" name="amount" class="form-control" placeholder="Enter amount" value="0" required>
+                                                                                                    <div class="input-group-append">
+                                                                                                        <span class="input-group-text"><strong>LBP</strong></span>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div><!-- form-group -->
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </form>
+                                                                            </div>
+
+                                                                            <div class="modal-footer">
+                                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                                <button type="button" class="btn btn-success" onclick="
+                                                                                        event.preventDefault();
+                                                                                        document.getElementById('pay-form-{{$invoice->id}}').submit();">Pay</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -196,23 +266,10 @@
                                         </div>
 
                                         <div class="tab-pane" id="recharge">
-                                            @if ($errors->any())
-                                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                                    <h5 class="tx-danger"> Please check the following fields:</h5>
-                                                    <ul>
-                                                        @foreach ($errors->all() as $error)
-                                                            <li class="h6 tx-danger">{{ $error }}</li>
-                                                        @endforeach
-                                                    </ul>
-
-                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                            @endif
                                             <form id="recharge-customer" method="post" action="{{route('customers.recharge',$customer->id)}}"  data-parsley-validate>
 
                                                 @csrf()
+
 
                                                 <fieldset class="form-fieldset mb-2">
                                                     <legend>Recharge Information</legend>
@@ -259,7 +316,7 @@
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
                                                                     </div>
-                                                                    <input id="iptv_price" type="number" name="iptv_price" class="form-control" placeholder="Enter plan cost" value="{{$customer->iptv()->first()->price}}" readonly>
+                                                                    <input id="iptv_price" type="number" name="iptv_price" class="form-control" placeholder="Enter plan cost" value="{{($customer->iptv()->count() == 0) ?  0 : $customer->iptv()->first()->price}}" readonly>
                                                                     <div class="input-group-append">
                                                                         <span class="input-group-text"><strong>LBP</strong></span>
                                                                     </div>
@@ -293,7 +350,7 @@
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text"><i class="fas fa-percent"></i></span>
                                                                     </div>
-                                                                    <input id="discount" type="number" name="discount" class="form-control" placeholder="Enter discount rate" data-parsley-min="0" data-parsley-max="100" value="{{(old('discount'))? old('discount') : $customer->discount}}">
+                                                                    <input id="discount" type="number" name="discount" class="form-control" placeholder="Enter discount rate" data-parsley-min="0" data-parsley-max="100" value="{{(old('discount'))? old('discount') : (($customer->discount != null)?$customer->discount: 0) }}">
                                                                 </div>
                                                             </div><!-- form-group -->
                                                         </div>
@@ -326,7 +383,7 @@
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text"><i class="fas fa-calendar-day"></i></span>
                                                                     </div>
-                                                                    <input id="expires_at" type="text" name="expires_at" class="form-control" placeholder="Expiry date from radius" readonly>
+                                                                    <input id="expires_at" type="text" name="expires_at" class="form-control" placeholder="Expiry date from radius" value="{{($customer->radius_exp != '')? $customer->radius_exp : '' }}" readonly>
                                                                 </div>
                                                             </div><!-- form-group -->
                                                         </div>
@@ -402,7 +459,7 @@
                                                         <div class="col">
                                                             <div class="form-group">
                                                                 <label>Notes:</label>
-                                                                <textarea class="form-control" id="notes" rows="3" placeholder="Notes" name="notes">{{old('notes')}}</textarea>
+                                                                <textarea class="form-control" id="notes" rows="3" placeholder="Notes" name="notes">{{old('notes')?'notes':'Recharged using balance'}}</textarea>
                                                             </div><!-- form-group -->
                                                         </div>
                                                     </div>
@@ -417,9 +474,10 @@
                                         </div>
 
                                         <div class="tab-pane" id="edit">
-                                            <form id="create-user" action="#" method="post" data-parsley-validate>
+                                            <form id="create-user" action="{{route('customers.edit',$customer->id)}}" method="post" data-parsley-validate>
 
                                                 @csrf
+                                                @method('PUT')
 
                                                 <fieldset class="form-fieldset mb-2">
                                                     <legend>Personal Information</legend>
@@ -431,7 +489,7 @@
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text"><i class="fas fa-signature"></i></span>
                                                                     </div>
-                                                                    <input type="text" name="name" class="form-control" placeholder="Enter Name" autocomplete="name" value="{{old('name')}}" required>
+                                                                    <input type="text" name="name" class="form-control" placeholder="Enter Name" autocomplete="name" value="{{$customer->name}}" required>
                                                                 </div>
                                                             </div><!-- form-group -->
                                                         </div>
@@ -446,78 +504,80 @@
                                                                         <span class="input-group-text"><i class="fas fa-phone"></i></span>
                                                                         <span class="input-group-text"> (+961)</span>
                                                                     </div>
-                                                                    <input id="inputPhoneNumber" type="text" name="phone" class="form-control" placeholder="Enter Phone Number" autocomplete="tel-national" value="{{old('phone')}}" required>
+                                                                    <input id="inputPhoneNumber" type="text" name="phone" class="form-control" placeholder="Enter Phone Number" autocomplete="tel-national" value="{{$customer->phone}}" required>
                                                                 </div>
                                                             </div><!-- form-group -->
                                                         </div>
                                                     </div>
 
                                                     <legend class="mb-3 mt-4">Residential Information</legend>
-                                                    <div class="row mb-1">
-                                                        <div class="col">
-                                                            <div class="form-group">
-                                                                <label>Area: <span class="tx-danger">*</span></label>
-                                                                <div class="input-group">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text"><i class="fas fa-city"></i></span>
-                                                                    </div>
-                                                                    <select class="custom-select" name="area" required>
-                                                                        <option value="" {{(old('area') == '')  ? 'selected' : ''}}>Choose one</option>
-                                                                        @foreach($areas as $area)
-                                                                            <option value="{{$area->id}}" {{(old('area') == $area->id)  ? 'selected' : ''}}>{{$area->name}}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                            </div><!-- form-group -->
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-1">
-                                                        <div class="col">
-                                                            <div class="form-group">
-                                                                <label>Street: <span class="tx-danger">*</span></label>
-                                                                <div class="input-group">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text"><i class="fas fa-road"></i></span>
-                                                                    </div>
-                                                                    <select class="custom-select" name="street" disabled required>
-                                                                        <option value="" {{(old('street') == '')  ? 'selected' : ''}}>Choose area first</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div><!-- form-group -->
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-1">
-                                                        <div class="col">
-                                                            <div class="form-group">
-                                                                <label>Building: <span class="tx-danger">*</span></label>
-                                                                <div class="input-group">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text"><i class="fas fa-building"></i></span>
-                                                                    </div>
-                                                                    <select class="custom-select" name="building" disabled required>
-                                                                        <option value="" {{(old('building') == '')  ? 'selected' : ''}}>Choose street first</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div><!-- form-group -->
-                                                        </div>
-                                                    </div>
+{{--                                                    <div class="row mb-1">--}}
+{{--                                                        <div class="col-12">--}}
+{{--                                                            <div class="form-group">--}}
+{{--                                                                <label>Area: <span class="tx-danger">*</span></label>--}}
+{{--                                                                <div class="input-group">--}}
+{{--                                                                    <div class="input-group-prepend">--}}
+{{--                                                                        <span class="input-group-text"><i class="fas fa-city"></i></span>--}}
+{{--                                                                    </div>--}}
+{{--                                                                    <select class="custom-select" name="area" required>--}}
+{{--                                                                        <option value="" {{(old('area') == '')  ? 'selected' : ''}}>Choose one</option>--}}
+{{--                                                                        @foreach($areas as $area)--}}
+{{--                                                                            <option value="{{$area->id}}">{{$area->name}}</option>--}}
+{{--                                                                        @endforeach--}}
+{{--                                                                    </select>--}}
+{{--                                                                </div>--}}
+{{--                                                            </div><!-- form-group -->--}}
+{{--                                                        </div>--}}
+{{--                                                    </div>--}}
+{{--                                                    <div class="row mb-1">--}}
+{{--                                                        <div class="col">--}}
+{{--                                                            <div class="form-group">--}}
+{{--                                                                <label>Street: <span class="tx-danger">*</span></label>--}}
+{{--                                                                <div class="input-group">--}}
+{{--                                                                    <div class="input-group-prepend">--}}
+{{--                                                                        <span class="input-group-text"><i class="fas fa-road"></i></span>--}}
+{{--                                                                    </div>--}}
+{{--                                                                    <select class="custom-select" name="street" disabled required>--}}
+{{--                                                                        <option value="" {{(old('street') == '')  ? 'selected' : ''}}>Choose area first</option>--}}
+{{--                                                                    </select>--}}
+{{--                                                                </div>--}}
+{{--                                                            </div><!-- form-group -->--}}
+{{--                                                        </div>--}}
+{{--                                                    </div>--}}
+{{--                                                    <div class="row mb-1">--}}
+{{--                                                        <div class="col">--}}
+{{--                                                            <div class="form-group">--}}
+{{--                                                                <label>Building: <span class="tx-danger">*</span></label>--}}
+{{--                                                                <div class="input-group">--}}
+{{--                                                                    <div class="input-group-prepend">--}}
+{{--                                                                        <span class="input-group-text"><i class="fas fa-building"></i></span>--}}
+{{--                                                                    </div>--}}
+{{--                                                                    <select class="custom-select" name="building" disabled required>--}}
+{{--                                                                        <option value="" {{(old('building') == '')  ? 'selected' : ''}}>Choose street first</option>--}}
+{{--                                                                    </select>--}}
+{{--                                                                </div>--}}
+{{--                                                            </div><!-- form-group -->--}}
+{{--                                                        </div>--}}
+{{--                                                    </div>--}}
 
-                                                    <div class="row mb-1">
-                                                        <div class="col">
-                                                            <div class="form-group">
-                                                                <label>Box: <span class="tx-danger">*</span></label>
-                                                                <div class="input-group">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text"><i class="fas fa-box"></i></span>
-                                                                    </div>
-                                                                    <select class="custom-select" name="box" disabled required>
-                                                                        <option value="" {{(old('box') == '')  ? 'selected' : ''}}>Choose building first</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div><!-- form-group -->
-                                                        </div>
-                                                    </div>
+{{--                                                    <div class="row mb-1">--}}
+{{--                                                        <div class="col">--}}
+{{--                                                            <div class="form-group">--}}
+{{--                                                                <label>Box: <span class="tx-danger">*</span></label>--}}
+{{--                                                                <div class="input-group">--}}
+{{--                                                                    <div class="input-group-prepend">--}}
+{{--                                                                        <span class="input-group-text"><i class="fas fa-box"></i></span>--}}
+{{--                                                                    </div>--}}
+{{--                                                                    <select class="custom-select" name="box" disabled required>--}}
+{{--                                                                        <option value="" {{(old('box') == '')  ? 'selected' : ''}}>Choose building first</option>--}}
+{{--                                                                    </select>--}}
+{{--                                                                </div>--}}
+{{--                                                            </div><!-- form-group -->--}}
+{{--                                                        </div>--}}
+{{--                                                    </div>--}}
                                                 </fieldset>
+
+
                                                 <fieldset class="form-fieldset mb-2">
                                                     <legend> User Credentials</legend>
                                                     <div class="row mb-2">
@@ -528,7 +588,7 @@
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text"><i class="fas fa-user-circle"></i></span>
                                                                     </div>
-                                                                    <input type="text" name="username" class="form-control" placeholder="Enter Username" autocomplete="username" value="{{old('username')}}" required>
+                                                                    <input type="text" name="username" class="form-control" placeholder="Enter Username" autocomplete="username" value="{{$customer->username}}" required>
                                                                 </div>
                                                             </div><!-- form-group -->
                                                         </div>
@@ -536,12 +596,12 @@
                                                     <div class="row mb-2">
                                                         <div class="col">
                                                             <div class="form-group">
-                                                                <label>Password: <span class="tx-danger">*</span></label>
+                                                                <label>Password: </label>
                                                                 <div class="input-group">
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text"><i class="fas fa-key"></i></span>
                                                                     </div>
-                                                                    <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Enter password" autocomplete="new-password" required>
+                                                                    <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Enter password" autocomplete="new-password" >
                                                                 </div>
                                                             </div><!-- form-group -->
                                                         </div>
@@ -563,7 +623,7 @@
                                                                     <select class="custom-select" name="plan" required>
                                                                         <option value="" {{(old('plan') == '')  ? 'selected' : ''}}>Choose one</option>
                                                                         @foreach($plans as $plan)
-                                                                            <option value="{{$plan->id}}" {{(old('plan') == $plan->id)  ? 'selected' : ''}}>{{$plan->name}}</option>
+                                                                            <option value="{{$plan->id}}" {{ ($customer->plan_id == $plan->id)? 'selected' : ''}}>{{$plan->name}}</option>
                                                                         @endforeach
                                                                     </select>
                                                                 </div>
@@ -571,51 +631,51 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="row mt-4 mb-4">
-                                                        <div class="col">
-                                                            <div class="custom-control custom-switch">
-                                                                <input type="checkbox" class="custom-control-input" id="enableIPTV" name="enableIPTV" {{ old('enableIPTV') ? 'checked' : '' }}>
-                                                                <label class="custom-control-label" for="enableIPTV">Enable IPTV</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+{{--                                                    <div class="row mt-4 mb-4">--}}
+{{--                                                        <div class="col">--}}
+{{--                                                            <div class="custom-control custom-switch">--}}
+{{--                                                                <input type="checkbox" class="custom-control-input" id="enableIPTV" name="enableIPTV" {{ ($customer->plan_id == null)? 'checked': ''}}>--}}
+{{--                                                                <label class="custom-control-label" for="enableIPTV">Enable IPTV</label>--}}
+{{--                                                            </div>--}}
+{{--                                                        </div>--}}
+{{--                                                    </div>--}}
 
-                                                    <div class="row mb-1">
-                                                        <div class="col">
-                                                            <div class="form-group">
-                                                                <label id="iptvLabel">IPTV: </label>
-                                                                <div class="input-group">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text"><i class="fas fa-tv"></i></span>
-                                                                    </div>
-                                                                    <select class="custom-select" name="iptv" id="iptv"  {{ old('enableIPTV') ? '' : 'disabled' }}>
-                                                                        <option value="" {{(old('iptv') == '')  ? 'selected' : ''}}>Choose one</option>
-                                                                        @foreach($iptv as $tv)
-                                                                            <option value="{{$tv->id}}" {{(old('iptv') == $tv->id)  ? 'selected' : ''}}>{{$tv->name}}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                            </div><!-- form-group -->
-                                                        </div>
-                                                    </div>
+{{--                                                    <div class="row mb-1">--}}
+{{--                                                        <div class="col">--}}
+{{--                                                            <div class="form-group">--}}
+{{--                                                                <label id="iptvLabel">IPTV: </label>--}}
+{{--                                                                <div class="input-group">--}}
+{{--                                                                    <div class="input-group-prepend">--}}
+{{--                                                                        <span class="input-group-text"><i class="fas fa-tv"></i></span>--}}
+{{--                                                                    </div>--}}
+{{--                                                                    <select class="custom-select" name="iptv" id="iptv"  {{ old('enableIPTV') ? '' : 'disabled' }}>--}}
+{{--                                                                        <option value="" {{(old('iptv') == '')  ? 'selected' : ''}}>Choose one</option>--}}
+{{--                                                                        @foreach($iptv as $tv)--}}
+{{--                                                                            <option value="{{$tv->id}}" {{(old('iptv') == $tv->id)  ? 'selected' : ''}}>{{$tv->name}}</option>--}}
+{{--                                                                        @endforeach--}}
+{{--                                                                    </select>--}}
+{{--                                                                </div>--}}
+{{--                                                            </div><!-- form-group -->--}}
+{{--                                                        </div>--}}
+{{--                                                    </div>--}}
 
-                                                    <div class="row mb-1">
-                                                        <div class="col">
-                                                            <div class="form-group">
-                                                                <label>Services: </label>
-                                                                <div class="input-group">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text"><i class="fas fa-cogs"></i></span>
-                                                                    </div>
-                                                                    <select id="services" class="custom-select" name="service[]" id="service" multiple="multiple" >
-                                                                        @foreach($services as $service)
-                                                                            <option value="{{$service->id}}" {{old('service')?(in_array($service->id, old('service')) ? 'selected' : '') : ''}}>{{$service->name}}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                            </div><!-- form-group -->
-                                                        </div>
-                                                    </div>
+{{--                                                    <div class="row mb-1">--}}
+{{--                                                        <div class="col">--}}
+{{--                                                            <div class="form-group">--}}
+{{--                                                                <label>Services: </label>--}}
+{{--                                                                <div class="input-group">--}}
+{{--                                                                    <div class="input-group-prepend">--}}
+{{--                                                                        <span class="input-group-text"><i class="fas fa-cogs"></i></span>--}}
+{{--                                                                    </div>--}}
+{{--                                                                    <select id="services" class="custom-select" name="service[]" id="service" multiple="multiple" >--}}
+{{--                                                                        @foreach($services as $service)--}}
+{{--                                                                            <option value="{{$service->id}}" {{old('service')?(in_array($service->id, old('service')) ? 'selected' : '') : ''}}>{{$service->name}}</option>--}}
+{{--                                                                        @endforeach--}}
+{{--                                                                    </select>--}}
+{{--                                                                </div>--}}
+{{--                                                            </div><!-- form-group -->--}}
+{{--                                                        </div>--}}
+{{--                                                    </div>--}}
 
                                                 </fieldset>
 
@@ -633,7 +693,7 @@
                                                                     <select class="custom-select" name="employee" required>
                                                                         <option value="" {{(old('employee') == '')  ? 'selected' : ''}}>Choose one</option>
                                                                         @foreach($employees as $employee)
-                                                                            <option value="{{$employee->id}}" {{(old('employee') == $employee->id)  ? 'selected' : ''}}>{{$employee->name}}</option>
+                                                                            <option value="{{$employee->id}}" {{($customer->emp_id == $employee->id)  ? 'selected' : ''}}>{{$employee->name}}</option>
                                                                         @endforeach
                                                                     </select>
                                                                 </div>
@@ -644,7 +704,7 @@
                                                     <div class="row mt-4 mb-4">
                                                         <div class="col">
                                                             <div class="custom-control custom-switch">
-                                                                <input type="checkbox" value="1" class="custom-control-input" name="active" id="active" {{ old('active') ? 'checked' : '' }}>
+                                                                <input type="checkbox" value="1" class="custom-control-input" name="active" id="active" {{ ($customer -> active) ? 'checked' : '' }}>
                                                                 <label class="custom-control-label" for="active">Active</label>
                                                             </div>
                                                         </div>
@@ -653,7 +713,7 @@
                                                     <div class="row mt-4 mb-4">
                                                         <div class="col">
                                                             <div class="custom-control custom-switch">
-                                                                <input type="checkbox" value="1" class="custom-control-input" id="free_account" name="free_account" {{ old('free_account') ? 'checked' : '' }}>
+                                                                <input type="checkbox" value="1" class="custom-control-input" id="free_account" name="free_account" {{($customer->free_account) ? 'checked' : '' }}>
                                                                 <label class="custom-control-label" for="free_account">Free Account</label>
                                                             </div>
                                                         </div>
@@ -667,7 +727,7 @@
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text"><i class="fas fa-calendar-day"></i></span>
                                                                     </div>
-                                                                    <input id="inputExpire" type="text" name="expires_at" class="form-control" placeholder="Enter Expiry Date" value="{{old('expires_at')}}" required>
+                                                                    <input id="inputExpire" type="text" name="expires_at" class="form-control" placeholder="Enter Expiry Date" value="{{date("Y-m-d",strtotime($customer -> expires_at))}}" required>
 
                                                                 </div>
                                                             </div><!-- form-group -->
@@ -677,12 +737,12 @@
                                                     <div class="row mb-2">
                                                         <div class="col">
                                                             <div class="form-group">
-                                                                <label>Cost: </label>
+                                                                <label>Custom Price: </label>
                                                                 <div class="input-group">
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
                                                                     </div>
-                                                                    <input id="inputCost" type="number" name="custom_price" class="form-control" placeholder="Enter custom price" value="{{old('custom_price')}}" >
+                                                                    <input id="inputCost" type="number" name="custom_price" class="form-control" placeholder="Enter custom price" value="{{$customer->custom_price}}" >
                                                                     <div class="input-group-append">
                                                                         <span class="input-group-text"><strong>LBP</strong></span>
                                                                     </div>
@@ -699,7 +759,7 @@
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text"><i class="fas fa-percent"></i></span>
                                                                     </div>
-                                                                    <input id="inputDiscount" type="number" name="discount" class="form-control" placeholder="Enter discount rate" value="{{old('discount')}}" >
+                                                                    <input id="inputDiscount" type="number" name="discount" class="form-control" placeholder="Enter discount rate" value="{{$customer->discount}}" >
                                                                 </div>
                                                             </div><!-- form-group -->
                                                         </div>
@@ -709,14 +769,14 @@
                                                         <div class="col">
                                                             <div class="form-group">
                                                                 <label>Notes:</label>
-                                                                <textarea class="form-control" rows="5" placeholder="Notes" name="notes">{{old('notes')}}</textarea>
+                                                                <textarea class="form-control" rows="5" placeholder="Notes" name="notes">{{$customer->notes}}</textarea>
                                                             </div><!-- form-group -->
                                                         </div>
                                                     </div>
                                                 </fieldset>
                                                 <div class="row mb-3">
                                                     <div class="col">
-                                                        <button type="submit" class="btn btn-primary">Create</button>
+                                                        <button type="submit" class="btn btn-primary">Edit</button>
                                                     </div>
                                                 </div>
                                             </form>
@@ -753,7 +813,9 @@
         let custom_price = parseFloat($("#custom_price").val());
         let discount = parseFloat($("#discount").val());
 
-        let total_price = iptv_price + services_price;
+
+
+        let total_price = services_price;
 
         if(custom_price == 0){
             total_price += plan_price;
@@ -824,5 +886,136 @@
 
         // Select2
         $('.dataTables_length select').select2({ minimumResultsForSearch: Infinity });
+    </script>
+
+
+    <script type="text/javascript">
+        let phone = new Cleave('#inputPhoneNumber', {
+            phone: true,
+            phoneRegionCode: 'LB'
+        });
+
+        $( function() {
+            $('#inputExpire').datepicker({
+                showOtherMonths: true,
+                selectOtherMonths: true,
+                changeMonth: true,
+                changeYear: true
+            });
+        } );
+
+        $( function() {
+            $('#create-user').parsley({
+                errorsContainer: function(el) {
+                    return el.$element.closest('.form-group');
+                },
+                errorClass: 'is-invalid',
+                successClass: 'is-valid',
+            });
+        } );
+
+
+        // $('#services').select2({
+        //    width: resolve
+        // });
+
+        $("#enableIPTV").on('change',function(){
+            if ($("#enableIPTV").prop('checked')){
+                $('select[name="iptv"]').prop('disabled',false).prop('required',true);
+                $('#iptvLabel').append('<span class="tx-danger">*</span>');
+            }else{
+                $('select[name="iptv"]').prop('disabled',true).prop('required',false);
+                $('#iptvLabel').empty().append('IPTV:');
+            }
+        });
+        // $('select[name="area"]').select2({
+        //     tags:true,
+        //     width: resolve
+        // });
+        //
+        // $('select[name="street"]').select2({
+        //     tags:true
+        // });
+        //
+        // $('select[name="building"]').select2({
+        //     tags:true
+        // });
+        // $('select[name="box"]').select2({
+        //     tags:true
+        // });
+
+        $(document).ready(function() {
+            $('select[name="area"]').on('change', function() {
+                let areaID = $(this).val();
+                if(areaID) {
+
+                    $.ajax({
+                        url: '{{ url('street') }}/' + areaID ,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('select[name="street"]').prop('disabled',false).empty().append('<option value="" selected>Choose Street</option>');
+                            $('select[name="building"]').prop('disabled',true).empty().append('<option value="" selected>Choose Building</option>');
+                            $('select[name="box"]').prop('disabled',true).empty().append('<option value="" selected>Choose Box</option>');
+                            $.each(data, function(key, value) {
+
+                                $('select[name="street"]').append('<option value="'+ value.id +'">'+ value.name +'</option>');
+                            });
+                        }
+                    });
+                }else{
+                    $('select[name="street"]').prop('disabled',true).empty().append('<option value="" selected>Choose area first</option>');
+                    $('select[name="building"]').prop('disabled',true).empty().append('<option value="" selected>Choose street first</option>');
+                    $('select[name="box"]').prop('disabled',true).empty().append('<option value="" selected>Choose building first</option>');
+                }
+            });
+        });
+
+        $(document).ready(function() {
+            $('select[name="street"]').on('change', function() {
+                let streetID = $('select[name="street"]').val();
+                if(streetID) {
+
+                    $.ajax({
+                        url: '{{ url('building') }}/' + streetID ,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('select[name="building"]').prop('disabled',false).empty().append('<option value="" selected>Choose Building</option>');
+                            $('select[name="box"]').prop('disabled',true).empty().append('<option value="" selected>Choose Box</option>');
+                            $.each(data, function(key, value) {
+
+                                $('select[name="building"]').append('<option value="'+ value.id +'">'+ value.name +'</option>');
+                            });
+                        }
+                    });
+                }else{
+                    $('select[name="building"]').prop('disabled',true).empty().append('<option value="" selected>Choose street first</option>');
+                    $('select[name="box"]').prop('disabled',true).empty().append('<option value="" selected>Choose building first</option>');
+                }
+            });
+        });
+
+        $(document).ready(function() {
+            $('select[name="building"]').on('change', function() {
+                let buildingID = $(this).val();
+                if(buildingID) {
+                    $.ajax({
+                        url: '{{ url('box') }}/' + buildingID ,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('select[name="box"]').prop('disabled',false).empty().append('<option value="" selected>Choose Box</option>');
+                            $.each(data, function(key, value) {
+
+                                $('select[name="box"]').append('<option value="'+ value.id +'">'+ value.name +'</option>');
+                            });
+                        }
+                    });
+                }else{
+                    $('select[name="box"]').prop('disabled',true).empty().append('<option value="" selected>Choose building first</option>');
+                }
+            });
+        });
     </script>
 @endsection
