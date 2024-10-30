@@ -2,14 +2,10 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { CommonModule } from '@angular/common'; // Import CommonModule
+
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    CommonModule // Add CommonModule to imports
-  ],
+  declarations: [AppComponent],
+  imports: [BrowserModule, CommonModule], // Add CommonModule to imports and add a comma
   providers: [],
   bootstrap: [AppComponent]
 })
